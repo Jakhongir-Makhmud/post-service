@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+import "post_loader_service/post_loader.proto";
+
+package post_loader_service;
+
+service Post_loader_service {
+    rpc LoadPosts(LoadPostParam) returns (LoadingStatus);
+    rpc GetJobStatus(JobId) returns (LoadingStatus);
+}

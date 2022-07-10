@@ -1,0 +1,16 @@
+{
+    "app": {
+        "name":"post_service",
+        "port": ":9002",
+        "database": {
+            "username": "jakhongir",
+            "password": "1",
+            "host": "localhost",
+            "port": "5432",
+            "dbname": "testdb"
+        },
+        "log": {
+            "level": "development"
+        }
+    }
+}

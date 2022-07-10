@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+import "post_service/post.proto";
+
+package post;
+
+service PostService {
+    rpc GetPost(PostId) returns (Post);
+    rpc ListPost(ListOfPosts) returns (Posts);
+    rpc UpdatePost(Post) returns (Post);
+    rpc DeletePost(PostId) returns (Empty);
+}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	ps "post-service/genproto/post_service"
 	"post-service/internal/structs"
 
 	"go.uber.org/zap"
@@ -12,58 +13,56 @@ import (
 func columns() string {
 	return `
 		post_id,
-		user_id,
 		title,
 		body
 	`
 }
 
-func fields(f *structs.Post) []interface{} {
+func fields(f *ps.Post) []interface{} {
 	return []interface{}{
 		&f.Id,
-		&f.UserId,
 		&f.Title,
 		&f.Body,
 	}
 }
 
-func (r *repo) GetPost(ctx context.Context, postId int) (structs.Post, error) {
+func (r *repo) GetPost(ctx context.Context, postId int64) (ps.Post, error) {
 
 	query := fmt.Sprintf("SELECT %s FROM posts WHERE post_id = $1", columns())
 
-	var post structs.Post
+	var post ps.Post
 
 	err := r.db.QueryRowContext(ctx, query, postId).Scan(fields(&post))
 	if err != nil {
 		if err == sql.ErrNoRows {
-			r.logger.Warn("nothing found", zap.Int("post id: ", postId))
-			return structs.Post{}, structs.ErrNotFound
+			r.logger.Warn("nothing found", zap.Int64("post id: ", postId))
+			return ps.Post{}, structs.ErrNotFound
 		}
-		r.logger.Error("error while selecting post by id", zap.Int("post id: ", postId))
-		return structs.Post{}, err
+		r.logger.Error("error while selecting post by id", zap.Int64("post id: ", postId))
+		return ps.Post{}, err
 	}
 
 	return post, nil
 }
 
-func (r *repo) UpdatePost(ctx context.Context, post structs.Post) (structs.Post, error) {
+func (r *repo) UpdatePost(ctx context.Context, post *ps.Post) (*ps.Post, error) {
 
 	query := fmt.Sprintf("UPDATE posts SET title = $1, body = $2 WHERE post_id = $3 RETURNING %s", columns())
 
-	err := r.db.QueryRowContext(ctx, query, post.Title, post.Body, post.Id).Scan(fields(&post))
+	err := r.db.QueryRowContext(ctx, query, post.Title, post.Body, post.Id).Scan(fields(post))
 	if err != nil {
 		if err == sql.ErrNoRows {
 			r.logger.Warn("no such post", zap.Any("post to update: ", post))
-			return structs.Post{}, structs.ErrBadRequest
+			return nil, structs.ErrBadRequest
 		}
 		r.logger.Error("error while updating post in repo", zap.Any("post: ", post))
-		return structs.Post{}, err
+		return nil, err
 	}
 
 	return post, nil
 }
 
-func (r *repo) DeletePost(ctx context.Context, postId int) error {
+func (r *repo) DeletePost(ctx context.Context, postId int64) error {
 
 	_, err := r.db.ExecContext(ctx, "DELETE FROM posts WHERE post_id = $1", postId)
 	if err != nil {
@@ -73,28 +72,28 @@ func (r *repo) DeletePost(ctx context.Context, postId int) error {
 	return nil
 }
 
-func (r *repo) GetPosts(ctx context.Context, params structs.PostParams) ([]structs.Post, error) {
+func (r *repo) GetPosts(ctx context.Context, params ps.ListOfPosts) (*ps.Posts, error) {
 	offset := (params.Page - 1) * params.Limit
 	query := fmt.Sprintf("SELECT %s FROM posts LIMIT = $1 OFFSET = $2", columns())
 
 	rows, err := r.db.QueryContext(ctx, query, params.Limit, offset)
-
+	defer rows.Close()
 	if err != nil {
 		return nil, err
 	}
 
-	var posts []structs.Post
+	var posts *ps.Posts
 
 	for rows.Next() {
 
-		post := structs.Post{}
+		post := &ps.Post{}
 
-		err := rows.Scan(fields(&post))
+		err := rows.Scan(fields(post))
 		if err != nil {
 			return nil, err
 		}
 
-		posts = append(posts, post)
+		posts.Posts = append(posts.Posts, post)
 	}
 
 	return posts, nil

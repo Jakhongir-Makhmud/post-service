@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+
+package post_loader_service;
+
+message LoadPostParam {
+    int64 Pages = 1;
+}
+
+message LoadingStatus {
+    int64 JobId = 1;
+    string Status = 2;
+    int64 WorkOfDone = 3;
+}
+
+message JobId {
+    int64 Id = 1;
+}

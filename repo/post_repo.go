@@ -2,17 +2,17 @@ package post_repo
 
 import (
 	"context"
-	"post-service/internal/structs"
+	ps "post-service/genproto/post_service"
 	"post-service/pkg/logger"
 
 	"github.com/jmoiron/sqlx"
 )
 
 type PostRepo interface {
-	GetPost(ctx context.Context, postId int) (structs.Post, error)
-	UpdatePost(ctx context.Context, post structs.Post) (structs.Post, error)
-	DeletePost(ctx context.Context, postId int) error
-	GetPosts(ctx context.Context, params structs.PostParams) ([]structs.Post, error)
+	GetPost(ctx context.Context, postId int64) (ps.Post, error)
+	UpdatePost(ctx context.Context, post *ps.Post) (*ps.Post, error)
+	DeletePost(ctx context.Context, postId int64) error
+	GetPosts(ctx context.Context, params ps.ListOfPosts) (*ps.Posts, error)
 }
 
 type repo struct {

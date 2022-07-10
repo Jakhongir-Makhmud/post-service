@@ -19,7 +19,7 @@ type config struct {
 func NewConfig() Config {
 
 	cfg := viper.New()
-	cfg.SetConfigName("serviceConf")
+	cfg.SetConfigName("config")
 	cfg.SetConfigType("json")
 	cfg.AddConfigPath("./config")
 
