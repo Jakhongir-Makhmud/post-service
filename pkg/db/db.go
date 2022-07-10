@@ -17,6 +17,10 @@ func NewDB(cfg config.Config) *sqlx.DB {
 		cfg.GetInt("port"),
 	)
 
-	sqlx.
+	db, err := sqlx.Connect("postgres", dns)
+	if err != nil {
+		panic(err)
+	}
 
+	return db
 }
