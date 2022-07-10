@@ -23,13 +23,12 @@ var (
 
 type Field = zapcore.Field
 
-
 type Logger interface {
 	Debug(msg string, fields ...Field)
-	Info(msg string,fields ...Field)
-	Warn(string,...Field)
-	Error(string,...Field)
-	Fatal(string,...Field)
+	Info(msg string, fields ...Field)
+	Warn(string, ...Field)
+	Error(string, ...Field)
+	Fatal(string, ...Field)
 }
 
 type loggerImpl struct {
@@ -41,32 +40,32 @@ var (
 )
 
 func (l *loggerImpl) Debug(msg string, fields ...Field) {
-	l.zap.Debug(msg,fields...)
+	l.zap.Debug(msg, fields...)
 }
 
-func (l *loggerImpl) Info(msg string,fields ...Field) {
-	l.zap.Info(msg,fields...)
+func (l *loggerImpl) Info(msg string, fields ...Field) {
+	l.zap.Info(msg, fields...)
 }
 
-func (l *loggerImpl) Warn(msg string,fields ...Field) {
-	l.zap.Warn(msg,fields...)
+func (l *loggerImpl) Warn(msg string, fields ...Field) {
+	l.zap.Warn(msg, fields...)
 }
 
-func (l *loggerImpl) Error(msg string,fields ...Field) {
-	l.zap.Error(msg,fields...)
+func (l *loggerImpl) Error(msg string, fields ...Field) {
+	l.zap.Error(msg, fields...)
 }
 
-func (l *loggerImpl) Fatal(msg string,fields ...Field) {
-	l.zap.Fatal(msg,fields...)
+func (l *loggerImpl) Fatal(msg string, fields ...Field) {
+	l.zap.Fatal(msg, fields...)
 }
 
-func New(level string,namespace string) Logger {
+func New(level string, namespace string) Logger {
 	if level == "" {
 		level = LevelInfo
 	}
 
 	logger := loggerImpl{
-		zap: newZapLogger(level,time.RFC3339),
+		zap: newZapLogger(level, time.RFC3339),
 	}
 
 	logger.zap = logger.zap.Named(namespace)
@@ -77,7 +76,7 @@ func New(level string,namespace string) Logger {
 }
 
 // GetNamed ...
-func GetNamed(l Logger,name string ) Logger {
+func GetNamed(l Logger, name string) Logger {
 	switch v := l.(type) {
 	case *loggerImpl:
 		v.zap.Named(name)
@@ -87,8 +86,9 @@ func GetNamed(l Logger,name string ) Logger {
 		return l
 	}
 }
+
 // WithFields ...
-func WithFields( l Logger, fields ...Field) Logger {
+func WithFields(l Logger, fields ...Field) Logger {
 	switch v := l.(type) {
 	case *loggerImpl:
 		return &loggerImpl{
@@ -110,4 +110,3 @@ func Cleanup(l Logger) error {
 		return nil
 	}
 }
-

@@ -8,12 +8,11 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-
 func newZapLogger(level, timeFormat string) *zap.Logger {
 	globalLevel := parseLevel(level)
 
 	highPriority := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
-		return lvl >= zapcore.ErrorLevel 
+		return lvl >= zapcore.ErrorLevel
 	})
 
 	lowPriority := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
@@ -34,19 +33,18 @@ func newZapLogger(level, timeFormat string) *zap.Logger {
 	consoleEncoder := zapcore.NewJSONEncoder(encoderCfg)
 
 	core := zapcore.NewTee(
-		zapcore.NewCore(consoleEncoder,consoleErrors,highPriority),
-		zapcore.NewCore(consoleEncoder,consoleInfos,lowPriority),
+		zapcore.NewCore(consoleEncoder, consoleErrors, highPriority),
+		zapcore.NewCore(consoleEncoder, consoleInfos, lowPriority),
 	)
 
 	logger := zap.New(core)
-	
+
 	return logger
 }
 
-func customTimeEncoder(t time.Time,enc zapcore.PrimitiveArrayEncoder) {
+func customTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 	enc.AppendString(t.Format(customTimeFormat))
 }
-
 
 func parseLevel(level string) zapcore.Level {
 	switch level {
@@ -63,18 +61,17 @@ func parseLevel(level string) zapcore.Level {
 	}
 }
 
-
 func GetZapLogger(l Logger) *zap.Logger {
 
 	if l == nil {
-		return newZapLogger(LevelInfo,time.RFC3339)
+		return newZapLogger(LevelInfo, time.RFC3339)
 	}
 
 	switch v := l.(type) {
 	case *loggerImpl:
 		return v.zap
 	default:
-		l.Info("logger.WithFields: invalid logger type, creating a new zap logger",String("level",LevelInfo), String("time_format",time.RFC3339))
-		return newZapLogger(LevelInfo,time.RFC3339)
+		l.Info("logger.WithFields: invalid logger type, creating a new zap logger", String("level", LevelInfo), String("time_format", time.RFC3339))
+		return newZapLogger(LevelInfo, time.RFC3339)
 	}
 }
