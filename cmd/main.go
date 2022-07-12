@@ -32,7 +32,7 @@ func main() {
 	pbps.RegisterPostServiceServer(s, service)
 	reflection.Register(s)
 
-	logger.Info("service has stated it's job")
+	logger.Info("service has started it's job on port: " + cfg.GetString("app.port"))
 
 	panic(s.Serve(listener))
 }

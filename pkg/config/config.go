@@ -22,7 +22,9 @@ func NewConfig() Config {
 	cfg.SetConfigName("config")
 	cfg.SetConfigType("json")
 	cfg.AddConfigPath("./config")
-
+	if err := cfg.ReadInConfig(); err != nil {
+		panic(err)
+	}
 	cfg.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	cfg.AutomaticEnv()
 

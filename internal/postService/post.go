@@ -2,6 +2,7 @@ package postservice
 
 import (
 	"context"
+	"fmt"
 	ps "post-service/genproto/post_service"
 	"post-service/internal/structs"
 
@@ -51,6 +52,13 @@ func (s *service) DeletePost(ctx context.Context, postId *ps.PostId) (*ps.Empty,
 
 func (s *service) ListPost(ctx context.Context, params *ps.ListOfPosts) (*ps.Posts, error) {
 
+	if params.Page <= 0{
+		params.Page = 1
+	}
+	if params.Limit <= 0 {
+		params.Limit = 10
+	}
+	s.logger.Info(fmt.Sprintf("params %+v",params))
 	posts, err := s.postRepo.GetPosts(ctx, *params)
 	if err != nil {
 		if err == structs.ErrNotFound {

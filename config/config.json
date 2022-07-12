@@ -7,7 +7,7 @@
             "password": "1",
             "host": "localhost",
             "port": "5432",
-            "dbname": "testdb"
+            "dbname": "postdb"
         },
         "log": {
             "level": "development"
