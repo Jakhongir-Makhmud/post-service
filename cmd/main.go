@@ -17,9 +17,9 @@ func main() {
 
 	cfg := config.NewConfig()
 
-	db, logger :=db.NewDB(cfg), logger.New(cfg.GetString("app.log.level"), cfg.GetString("app.name"))
+	dbConn, logger := db.NewDB(cfg), logger.New(cfg.GetString("app.log.level"), cfg.GetString("app.name"))
 
-	postRepo := post_repo.NewPostRepo(db, logger)
+	postRepo := post_repo.NewPostRepo(dbConn, logger)
 
 	service := postService.NewPostService(postRepo, logger)
 

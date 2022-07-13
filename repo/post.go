@@ -55,7 +55,7 @@ func (r *repo) UpdatePost(ctx context.Context, post *ps.Post) (*ps.Post, error) 
 			r.logger.Warn("no such post", zap.Any("post to update: ", post))
 			return nil, structs.ErrBadRequest
 		}
-		r.logger.Error("error while updating post in repo", zap.Any("post: ", post),zap.Error(err))
+		r.logger.Error("error while updating post in repo", zap.Any("post: ", post), zap.Error(err))
 		return nil, err
 	}
 
