@@ -3,11 +3,11 @@
         "name":"post_service",
         "port": ":9002",
         "database": {
-            "username": "jakhongir",
-            "password": "1",
+            "username": "postgres",
+            "password": "",
             "host": "localhost",
             "port": "5432",
-            "dbname": "postdb"
+            "dbname": "postgres"
         },
         "log": {
             "level": "development"
